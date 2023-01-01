@@ -2,31 +2,42 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
+	"os"
+	"time"
 
-	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
-var SomeData Login
+func run() error {
+	mux := makeMuxRouter()
+	httpAddr := os.Getenv("PORT")
+	log.Println("Listening on ", os.Getenv("PORT"))
+	fmt.Println("Listening on ", os.Getenv("PORT"))
 
-func showData(c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, SomeData)
-}
-
-func userLogin(c *gin.Context) {
-	var Data Login
-	err := c.BindJSON(&Data)
-	if err != nil {
-		fmt.Println("Error occured")
-		return
+	s := &http.Server{
+		Addr:           ":" + httpAddr,
+		Handler:        mux,
+		ReadTimeout:    10 * time.Second,
+		WriteTimeout:   10 * time.Second,
+		MaxHeaderBytes: 1 << 20,
 	}
-	fmt.Println(Data)
-	c.IndentedJSON(http.StatusCreated, Data)
+
+	if err := s.ListenAndServe(); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func main() {
-	router := gin.Default()
-	router.GET("", showData)
-	router.POST("/login", userLogin)
-	router.Run("192.168.0.118:8000")
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Fatal(run())
 }
+
+var SomeData Login
+var Blockchain []Block

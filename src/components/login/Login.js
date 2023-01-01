@@ -1,7 +1,8 @@
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import {useState} from "react";
 import LoginApi from "./LoginApi"
-export default function Login() {
+
+export default function Login({navigation}) {
 
   const [email,setEmail] = useState('')
   const [password,setPassword] = useState('')
@@ -13,8 +14,7 @@ export default function Login() {
     }
     const response = await LoginApi.userLogin(request)
     console.log("Login response",response)
-    
-
+  
   }
   
   return (
@@ -29,12 +29,12 @@ export default function Login() {
         onChangeText={(value)=>setPassword(value)}
         />
         <View style={styles.loginbutton}>
-        <TouchableOpacity onPress = {()=>handleUserLogin()}>
+        <TouchableOpacity onPress = {()=>{handleUserLogin(),navigation.navigate("Dashboard")}}>
             <Text>Login</Text>
         </TouchableOpacity>
         </View>
         <View style={styles.loginbutton}>
-        <TouchableOpacity onPress = {()=>console.log("redirect user to sign up page")}>
+        <TouchableOpacity onPress = {()=>{console.log("redirect user to sign up page"),navigation.navigate("SignUp")}}>
             <Text>SignUp</Text>
         </TouchableOpacity>
         </View>

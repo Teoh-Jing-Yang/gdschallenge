@@ -2,7 +2,7 @@ import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-nativ
 import {useState} from "react";
 import SignUpApi from "./SignUpApi"
 
-export default function SignUp() {
+export default function SignUp({navigation}) {
 
   const [email,setEmail] = useState('')
   const [password,setPassword] = useState('')
@@ -34,7 +34,7 @@ export default function SignUp() {
         onChangeText={(value)=>setSmartMeterNo(value)}
         />
         <View style={styles.signUpButton}>
-        <TouchableOpacity onPress = {()=>handleUserSignUp()}>
+        <TouchableOpacity onPress = {()=>{handleUserSignUp(),navigation.navigate("Dashboard")}}>
             <Text>SignUp</Text>
         </TouchableOpacity>
         </View>

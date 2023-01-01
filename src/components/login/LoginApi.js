@@ -1,4 +1,5 @@
-const serverURL = "http://192.168.0.118:8000";
+import { serverURL } from "../../../initRoute";
+console.log(serverURL)
 const LoginRequest = serverURL + "/login"
 
 async function userLogin(data) {

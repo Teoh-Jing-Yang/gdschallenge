@@ -1,4 +1,5 @@
-const serverURL = "http://192.168.0.118:8000";
+import { serverURL } from "../../../initRoute";
+
 const EnergyRequest = serverURL + "/energyRequest"
 const GetEnergyForecast = serverURL + "/energyForecast"
 const GetBiddingRange = serverURL + "/biddingRange"

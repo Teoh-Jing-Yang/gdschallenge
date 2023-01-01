@@ -1,4 +1,5 @@
-const serverURL = "http://192.168.0.118:8000";
+import { serverURL } from "../../../initRoute";
+
 const GetBlockchain = serverURL + "/getBlockchain"
 
 async function getBlockchain() {
