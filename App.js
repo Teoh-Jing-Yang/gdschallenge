@@ -10,6 +10,7 @@ import EVcharging from './src/components/EV/EVcharging';
 import { NavigationContainer, TabActions, createNavigationContainerRef } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
+
 export default function App() {
   const naviRef = createNavigationContainerRef();
   const naviBar = createBottomTabNavigator();
