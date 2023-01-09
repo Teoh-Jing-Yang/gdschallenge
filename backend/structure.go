@@ -5,7 +5,9 @@ type Login struct {
 	Password string `json:"password"`
 }
 
-type SignUp struct {
+type User struct {
+	UserID       string `json:"userID"`
+	Username     string `json:"username"`
 	Email        string `json:"email"`
 	Password     string `json:"password"`
 	SmartMeterNo string `json:"smartMeterNo"`

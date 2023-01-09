@@ -33,10 +33,12 @@ func run() error {
 
 func main() {
 	err := godotenv.Load()
+	retrieveUserData()
 	if err != nil {
 		log.Fatal(err)
 	}
 	log.Fatal(run())
+
 }
 
 var SomeData Login

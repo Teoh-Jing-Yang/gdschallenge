@@ -11,12 +11,13 @@ import (
 func makeMuxRouter() http.Handler {
 	r := mux.NewRouter()
 	r.HandleFunc("/", showData).Methods("GET")
-	r.HandleFunc("/login", userLogin).Methods("POST")
-	r.HandleFunc("/signUp", userSignUp).Methods("POST")
+	r.HandleFunc("/login", handleUserLogin).Methods("POST")
+	r.HandleFunc("/signUp", handleSignUp).Methods("POST")
 	r.HandleFunc("/energyRequest", handleEnergyRequest).Methods("POST")
 	r.HandleFunc("/energyForecast", handleEnergyForecast).Methods("POST")
 	r.HandleFunc("/biddingRange", handleBiddingRange).Methods("POST")
 	r.HandleFunc("/getBlockchain", handleGetBlockchain).Methods("GET")
+	r.HandleFunc("/verifyJWT", handleVerifyJWT).Methods("GET")
 	return r
 }
 
@@ -38,36 +39,6 @@ func handleGetBlockchain(w http.ResponseWriter, r *http.Request) {
 	Blockchain = append(Blockchain, newBlock)
 	respondWithJSON(w, r, http.StatusAccepted, Blockchain)
 	fmt.Println(Blockchain)
-}
-
-func userLogin(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	var Data Login
-	decoder := json.NewDecoder(r.Body)
-	if err := decoder.Decode(&Data); err != nil {
-		fmt.Println("Error occured")
-		respondWithJSON(w, r, http.StatusBadRequest, r.Body)
-		return
-	}
-	defer r.Body.Close()
-	respondWithJSON(w, r, http.StatusCreated, Data)
-	fmt.Println(Data)
-	return
-}
-
-func userSignUp(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	var Data SignUp
-	decoder := json.NewDecoder(r.Body)
-	if err := decoder.Decode(&Data); err != nil {
-		fmt.Println("Error occured")
-		respondWithJSON(w, r, http.StatusBadRequest, r.Body)
-		return
-	}
-	defer r.Body.Close()
-	respondWithJSON(w, r, http.StatusCreated, Data)
-	fmt.Println(Data)
-	return
 }
 
 func handleEnergyRequest(w http.ResponseWriter, r *http.Request) {

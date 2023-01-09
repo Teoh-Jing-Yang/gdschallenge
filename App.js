@@ -27,6 +27,7 @@ export default function App() {
         <naviBar.Screen name='Blockchain' component={ViewBlockchain} />
         <naviBar.Screen name='Market' component={BuyEnergy} />
         <naviBar.Screen name='EV' component={EVcharging} />
+        <naviBar.Screen name='Profile' component={EVcharging} />
         
         {/* navigation for hidden items*/}
         <naviBar.Screen name='SignUp' component={SignUp} 
