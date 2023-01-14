@@ -14,6 +14,8 @@ type User struct {
 }
 
 type EnergyRequest struct {
+	BidID     string  `json:"bidID"`
+	UserID    string  `json:"userID"`
 	Energy    float64 `json:"energyAmount"`
 	Price     float64 `json:"biddingPrice"`
 	BuyOrSell string  `json:"BuyOrSell"`

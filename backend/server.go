@@ -18,6 +18,8 @@ func makeMuxRouter() http.Handler {
 	r.HandleFunc("/biddingRange", handleBiddingRange).Methods("POST")
 	r.HandleFunc("/getBlockchain", handleGetBlockchain).Methods("GET")
 	r.HandleFunc("/verifyJWT", handleVerifyJWT).Methods("GET")
+	r.HandleFunc("/initAuction", handleInitAuction).Methods("GET")
+	r.HandleFunc("/createRequest", createSomeRequest).Methods("GET")
 	return r
 }
 
@@ -39,21 +41,6 @@ func handleGetBlockchain(w http.ResponseWriter, r *http.Request) {
 	Blockchain = append(Blockchain, newBlock)
 	respondWithJSON(w, r, http.StatusAccepted, Blockchain)
 	fmt.Println(Blockchain)
-}
-
-func handleEnergyRequest(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	var Data EnergyRequest
-	decoder := json.NewDecoder(r.Body)
-	if err := decoder.Decode(&Data); err != nil {
-		fmt.Println("Error occured")
-		respondWithJSON(w, r, http.StatusBadRequest, r.Body)
-		return
-	}
-	defer r.Body.Close()
-	respondWithJSON(w, r, http.StatusCreated, Data)
-	fmt.Println(Data)
-	return
 }
 
 func handleBiddingRange(w http.ResponseWriter, r *http.Request) {

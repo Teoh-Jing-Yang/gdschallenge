@@ -33,7 +33,7 @@ func run() error {
 
 func main() {
 	err := godotenv.Load()
-	retrieveUserData()
+	initFirebase()
 	if err != nil {
 		log.Fatal(err)
 	}

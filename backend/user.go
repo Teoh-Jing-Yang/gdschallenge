@@ -5,16 +5,11 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"log"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt"
 )
-
-var AllUsers []User
 
 // This module contains function related to user account
 
@@ -34,8 +29,12 @@ func handleSignUp(w http.ResponseWriter, r *http.Request) {
 	h.Write([]byte(userInfo))
 	hash := h.Sum(nil)
 	newUser.UserID = hex.EncodeToString(hash)
-	AllUsers = append(AllUsers, newUser)
-	storeUserData()
+	err := AddUser(newUser)
+	if err != nil {
+		fmt.Println(err)
+		respondWithJSON(w, r, http.StatusBadRequest, r.Body)
+		return
+	}
 	jwToken, err := generateJWT(newUser)
 	if err != nil {
 		fmt.Println(err)
@@ -57,21 +56,23 @@ func handleUserLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer r.Body.Close()
-
-	for i := 0; i < len(AllUsers); i++ {
-		if (AllUsers[i].Email == loginRequest.Email) && (AllUsers[i].Password == loginRequest.Password) {
-			fmt.Println("Login successful")
-			fmt.Println("Generating jwtToken")
-			jwtToken, err := generateJWT(AllUsers[i])
-			if err != nil {
-				respondWithJSON(w, r, http.StatusBadRequest, r.Body)
-			} else {
-				respondWithJSON(w, r, http.StatusAccepted, jwtToken)
-				return
-			}
+	userData, err := GetUserByEmail(loginRequest.Email, loginRequest.Password)
+	if err != nil {
+		fmt.Println(err)
+		respondWithJSON(w, r, http.StatusBadRequest, r.Body)
+		return
+	}
+	if userData.Password == loginRequest.Password {
+		fmt.Println("Login successful")
+		fmt.Println("Generating jwtToken")
+		jwtToken, err := generateJWT(userData)
+		if err != nil {
+			respondWithJSON(w, r, http.StatusBadRequest, r.Body)
+		} else {
+			respondWithJSON(w, r, http.StatusAccepted, jwtToken)
+			return
 		}
 	}
-	fmt.Println("Cannot find user account")
 	respondWithJSON(w, r, http.StatusBadRequest, r.Body)
 	return
 }
@@ -99,6 +100,11 @@ func handleVerifyJWT(w http.ResponseWriter, r *http.Request) {
 		respondWithJSON(w, r, http.StatusUnauthorized, "")
 		return
 	}
+	if userid == "" {
+		fmt.Println("Cannot get user id")
+		respondWithJSON(w, r, http.StatusUnauthorized, "")
+		return
+	}
 	respondWithJSON(w, r, http.StatusAccepted, userid)
 	return
 
@@ -115,7 +121,7 @@ func verifyJWT(_ http.ResponseWriter, request *http.Request) (string, error) {
 			return []byte("DoNotShareThis"), nil
 		})
 		if err != nil {
-			return "Error Parsing Token: ", err
+			return "", err
 		}
 		claims, ok := token.Claims.(jwt.MapClaims)
 		if ok && token.Valid {
@@ -123,20 +129,5 @@ func verifyJWT(_ http.ResponseWriter, request *http.Request) (string, error) {
 			return userid, nil
 		}
 	}
-
-	return "unable to extract claims", nil
-}
-
-func storeUserData() {
-	jsonFile, _ := json.MarshalIndent(AllUsers, "", " ")
-	_ = ioutil.WriteFile("AllUsers.json", jsonFile, 0644)
-}
-
-func retrieveUserData() {
-	jsonFile, err := os.Open("AllUsers.json")
-	if err != nil {
-		log.Fatal(err)
-	}
-	byteValue, _ := ioutil.ReadAll(jsonFile)
-	json.Unmarshal(byteValue, &AllUsers)
+	return "", nil
 }
